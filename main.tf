@@ -14,11 +14,11 @@ resource "aws_instance" "mvn" {
     tags = {
         Name = "Maven server"
     }
-    vpc_security_group_ids = ["${aws_security_group.mvn_sec.id}"]
+    vpc_security_group_ids = [aws_security_group.mvn_sec.id]
     key_name = "ssh-key"
     associate_public_ip_address = true
 
-    user_data = "${data.template_file.maven_tpl.rendered}"
+    user_data = data.template_file.maven_tpl.rendered
 }
 
 resource "aws_instance" "web" {
@@ -29,11 +29,11 @@ resource "aws_instance" "web" {
     tags = {
         Name = "Tomcat server"
     }
-    vpc_security_group_ids = ["${aws_security_group.web_sec.id}"]
+    vpc_security_group_ids = [aws_security_group.web_sec.id]
     key_name = "ssh-key"
     associate_public_ip_address = true
 
-    user_data = "${data.template_file.tomcat_tpl.rendered}"
+    user_data = data.template_file.tomcat_tpl.rendered
 }
 
 resource "aws_security_group" "mvn_sec" {
@@ -97,29 +97,16 @@ resource "aws_security_group" "efs_sec" {
   }
 }
 
-resource "aws_efs_file_system" "efs" {
-    creation_token   = "EFS Shared Data"
-    performance_mode = "generalPurpose"
-    tags = {
-        Name = "EFS Shared Data"
-    }
-}
-resource "aws_efs_mount_target" "efs" {
-    file_system_id  = "${aws_efs_file_system.efs.id}"
-    subnet_id       = "subnet-c996eb85"
-    security_groups = ["${aws_security_group.efs_sec.id}"]
-}
-
 data "template_file" "maven_tpl" {
-  template = "${file("maven.tpl")}"
+  template = file("maven.tpl")
   vars = {
-    efs_id = "${aws_efs_file_system.efs.id}"
+    efs_id = aws_efs_file_system.efs.id
   }
 }
 
 data "template_file" "tomcat_tpl" {
-  template = "${file("tomcat.tpl")}"
+  template = file("tomcat.tpl")
   vars = {
-    efs_id = "${aws_efs_file_system.efs.id}"
+    efs_id = aws_efs_file_system.efs.id
   }
 }
