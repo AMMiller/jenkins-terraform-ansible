@@ -18,11 +18,11 @@ resource "aws_instance" "mvn" {
     key_name = "ssh-key"
     associate_public_ip_address = true
 
-    user_data = data.template_file.maven_tpl.rendered
+    // user_data = data.template_file.maven_tpl.rendered
 }
 
 resource "aws_instance" "web" {
-    depends_on = ["aws_instance.mvn"]
+    depends_on = [aws_instance.mvn]
     count = 1
     ami = "ami-0e82959d4ed12de3f"
     instance_type = "t2.micro"
@@ -33,7 +33,7 @@ resource "aws_instance" "web" {
     key_name = "ssh-key"
     associate_public_ip_address = true
 
-    user_data = data.template_file.tomcat_tpl.rendered
+    // user_data = data.template_file.tomcat_tpl.rendered
 }
 
 resource "aws_security_group" "mvn_sec" {
@@ -94,19 +94,5 @@ resource "aws_security_group" "efs_sec" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-data "template_file" "maven_tpl" {
-  template = file("maven.tpl")
-  vars = {
-    efs_id = aws_efs_file_system.efs.id
-  }
-}
-
-data "template_file" "tomcat_tpl" {
-  template = file("tomcat.tpl")
-  vars = {
-    efs_id = aws_efs_file_system.efs.id
   }
 }
