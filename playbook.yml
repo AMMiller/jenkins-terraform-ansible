@@ -3,7 +3,7 @@
   hosts: localhost
   connection: local
   gather_facts: false
-
+  
   tasks:
     - name: launch dev instance
       ec2:
@@ -20,6 +20,9 @@
 - name: Configure dev instance
   hosts: dev
   remote_user: ubuntu
+  become: true
+  become_user: root
+  become_method: sudo
 
   vars:
     - proj_dir: /var/lib/boxfuse-sample-java-war-hello
