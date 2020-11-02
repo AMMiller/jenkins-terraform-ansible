@@ -1,3 +1,9 @@
+variable common_tag {
+  type        = string
+  default     = "boxfuse"
+  description = "common tag for all instances"
+}
+
 variable region {
   type        = string
   default     = "us-east-2"
@@ -26,4 +32,16 @@ variable instance_type_dev {
   type        = string
   default     = "t2.micro"
   description = "instance type for dev server"
+}
+
+variable private_ip_dev {
+    type        = string
+    default     = "t2.micro"
+    description = "private ip of dev server"
+}
+
+variable private_ip_prod {
+    type        = string
+    default     = "t2.micro"
+    description = "private ip of prod server"
 }

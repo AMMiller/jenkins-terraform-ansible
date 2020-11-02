@@ -1,5 +1,32 @@
+terraform {
+    required_providers {
+        aws = {
+            source  = "hashicorp/aws"
+            version = "~> 3.0"
+        }
+    }
+}
+
 provider "aws" {
     region = var.region
+}
+
+resource "aws_vpc" "boxfuse_vpc" {
+  cidr_block = "172.16.0.0/16"
+
+  tags = {
+    Name = var.common_tag
+  }
+}
+
+resource "aws_subnet" "boxfuse_subnet" {
+  vpc_id            = aws_vpc.boxfuse_vpc.id
+  cidr_block        = "172.16.10.0/24"
+  availability_zone = var.zone
+
+  tags = {
+    Name = var.common_tag
+  }
 }
 
 #resource "aws_key_pair" "ssh-key" {
@@ -7,18 +34,36 @@ provider "aws" {
 #    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCrhsd7dekcsDR4+fcRgc4YRMfidea6I2jr1tlkqy6fNFnvexlv/LYQO9ARja/owWhUVEnGnI8Y9XJGJf4EazGXUjX8FDBRIbB7NWCAOQJph8RvUSi/+ZGfwfEunlR5DFoUHaX8xI2iph3bRXQzl93WGhSCkoyfjKLaNr3kHKukiZx9vCAVkW+SpJ1p7gQMnhmI5HUZrXKO4o3T7J2SlRkHZytgVYgY5vWeflUVhg1OlREt6ss59RYysR7GcMauvyeYpR9VMxwXkNAow4MmYv1j8zwHjnaTRYpAlcxlmMaM3BW1sYBJPLzaqPyZw3IHQalY91doNODiFEKn4BOB5vL2lTyYxnCehP0ebRinxfYxceOBcn7r2rj22GebfjTEzM3eTxfDjAVN6Bk/AOlPtbS6luBZA5vQ0qDTbU2mLHbjnPrRhKu8FrWEMM7qv3KOI3uu1YIJEmwW5nxV9OtwK5EDIuYbUknzQW/7A4/7wzQtrCTFwxSNYdbMM4HRUpbaBOGbzwEbIqw9h38nKaUN3QjzaPW0DN0gZtF6kkt31QXd2PIbv5OVIlYTGNHIWx12HY2WVn8piYCpwYXWzcNLPe6yWKBxZbZsoprpN+F47czHES9ZBrrt6nz6zHVqI6ZTl8XFJr4kRlV7GQIw9Yh711rhswITXdzLRAmhOO4DqAt8Ww== amiller@yandex.ru"
 #}
 
+resource "aws_network_interface" "dev_if" {
+    subnet_id   = aws_subnet.boxfuse_subnet.id
+    private_ips = ["172.16.10.100"]
+
+    tags = {
+        Name = "primary_network_interface"
+    }
+}
+
 resource "aws_instance" "dev" {
     count = 1
     ami = var.ami_dev
     instance_type = var.instance_type_dev
-    tags = {
-        Name = "Maven server"
-    }
-    vpc_security_group_ids = [aws_security_group.dev_sec.id]
-    //key_name = "ssh-key"
-    associate_public_ip_address = true
 
-    // user_data = data.template_file.maven_tpl.rendered
+    tags = {
+        Name = var.common_tag
+    }
+
+    vpc_security_group_ids = [aws_security_group.dev_sec.id]
+    associate_public_ip_address = false
+
+}
+
+resource "aws_network_interface" "prod_if" {
+    subnet_id   = aws_subnet.boxfuse_subnet.id
+    private_ips = ["172.16.10.101"]
+
+    tags = {
+        Name = "primary_network_interface"
+    }
 }
 
 resource "aws_instance" "prod" {
@@ -26,14 +71,13 @@ resource "aws_instance" "prod" {
     count = 1
     ami = var.ami_prod
     instance_type = var.instance_type_prod
-    tags = {
-        Name = "Tomcat server"
-    }
-    vpc_security_group_ids = [aws_security_group.prod_sec.id]
-    //key_name = "ssh-key"
-    associate_public_ip_address = true
 
-    // user_data = data.template_file.tomcat_tpl.rendered
+    tags = {
+        Name = "boxfuse"
+    }
+
+    vpc_security_group_ids = [aws_security_group.prod_sec.id]
+    associate_public_ip_address = true
 }
 
 resource "aws_security_group" "dev_sec" {
@@ -73,3 +117,5 @@ resource "aws_security_group" "prod_sec" {
         cidr_blocks = ["0.0.0.0/0"]
     }
 }
+
+
