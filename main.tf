@@ -52,7 +52,7 @@ resource "aws_instance" "dev" {
         Name = "boxfuse-dev"
     }
 
-    key_name: aws_key_pair.ssh_key
+    key_name = aws_key_pair.ssh_key
 #    network_interface {
 #        network_interface_id = aws_network_interface.dev_if.id
 #        device_index         = 0
@@ -82,7 +82,7 @@ resource "aws_instance" "prod" {
         Name = "boxfuse-prod"
     }
 
-    key_name: aws_key_pair.ssh_key
+    key_name = aws_key_pair.ssh_key
 #    network_interface {
 #        network_interface_id = aws_network_interface.prod_if.id
 #        device_index         = 0
