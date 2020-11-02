@@ -15,7 +15,7 @@ resource "aws_instance" "dev" {
         Name = "Maven server"
     }
     vpc_security_group_ids = [aws_security_group.dev_sec.id]
- #   key_name = "ssh-key"
+    //key_name = "ssh-key"
     associate_public_ip_address = true
 
     // user_data = data.template_file.maven_tpl.rendered
@@ -30,7 +30,7 @@ resource "aws_instance" "prod" {
         Name = "Tomcat server"
     }
     vpc_security_group_ids = [aws_security_group.prod_sec.id]
-  #  key_name = "ssh-key"
+    //key_name = "ssh-key"
     associate_public_ip_address = true
 
     // user_data = data.template_file.tomcat_tpl.rendered
