@@ -1,0 +1,9 @@
+---
+- name: boxfuse dev env
+
+  tasks:
+    amazon.aws.ec2:
+      instance_tags:
+        Name: boxfuse-dev
+
+      state: restarted

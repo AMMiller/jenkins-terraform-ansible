@@ -49,7 +49,7 @@ resource "aws_instance" "dev" {
     instance_type = var.instance_type_dev
 
     tags = {
-        Name = "boxfuse dev"
+        Name = "boxfuse-dev"
     }
 
 #    network_interface {
