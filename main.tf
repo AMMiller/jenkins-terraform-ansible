@@ -54,7 +54,7 @@ resource "aws_instance" "dev" {
 
     network_interface {
         network_interface_id = aws_network_interface.dev_if.id
-        device_index         = 0
+        device_index         = 1
     }
 
     vpc_security_group_ids = [aws_security_group.dev_sec.id]
@@ -83,7 +83,7 @@ resource "aws_instance" "prod" {
 
     network_interface {
         network_interface_id = aws_network_interface.prod_if.id
-        device_index         = 0
+        device_index         = 1
     }
 
     vpc_security_group_ids = [aws_security_group.prod_sec.id]
