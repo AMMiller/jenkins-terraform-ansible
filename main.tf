@@ -29,8 +29,8 @@ provider "aws" {
 #    }
 #}
 
-resource "aws_key_pair" "ssh-key" {
-    key_name   = "ssh-key"
+resource "aws_key_pair" "ssh_key" {
+    key_name   = "ssh_key"
     public_key = var.public_key_material
 }
 
