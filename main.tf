@@ -36,7 +36,7 @@ resource "aws_subnet" "boxfuse_subnet" {
 
 resource "aws_network_interface" "dev_if" {
     subnet_id   = aws_subnet.boxfuse_subnet.id
-    private_ips = [var.private_ip_prod]
+    private_ips = [var.private_ip_dev]
 
     tags = {
         Name = "primary_network_interface"
