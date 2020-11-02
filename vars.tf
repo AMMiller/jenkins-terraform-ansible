@@ -58,12 +58,12 @@ variable cidr_block_subnet {
 
 variable private_ip_dev {
     type        = string
-    default     = "t2.micro"
+    default     = "172.16.10.101"
     description = "private ip of dev server"
 }
 
 variable private_ip_prod {
     type        = string
-    default     = "t2.micro"
+    default     = "172.16.10.100"
     description = "private ip of prod server"
 }

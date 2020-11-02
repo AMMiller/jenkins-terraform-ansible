@@ -52,6 +52,11 @@ resource "aws_instance" "dev" {
         Name = var.common_tag
     }
 
+    network_interface {
+        network_interface_id = aws_network_interface.dev_if.id
+        device_index         = 0
+    }
+
     vpc_security_group_ids = [aws_security_group.dev_sec.id]
     associate_public_ip_address = false
 
@@ -74,6 +79,11 @@ resource "aws_instance" "prod" {
 
     tags = {
         Name = "boxfuse"
+    }
+
+    network_interface {
+        network_interface_id = aws_network_interface.prod_if.id
+        device_index         = 0
     }
 
     vpc_security_group_ids = [aws_security_group.prod_sec.id]
