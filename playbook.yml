@@ -9,51 +9,36 @@
     region: us-east-2
   
   tasks:
-    - name: Create a new EC2 key
-      ec2_key:
-        name: "{{ key_name }}"
-        region: "{{ region }}"
-      register: ec2_key
-
-    - name: Save private key
-      copy: content="{{ ec2_key.key.private_key }}" dest="./{{ key_name }}.pem" mode=0600
-      when: ec2_key.changed
-
     - name: launch dev instance
-      #ec2_instance_info:
-      #  filters:
-      #    names:
       ec2_instance_info:
         filters:
           "tag:Name": boxfuse-dev
-          #  - boxfuse-dev
+          instance-state-name: ['running']
       register: ec2
 
     - name: Add new instances to host group
       add_host: 
-        hostname: "{{ item.public_ip }}" 
+        hostname: "{{ item.public_ip_address }}" 
         groups: 
           - dev
-      #with_items: ec2.instances
+        #key_name: aws_key
       loop: "{{ ec2.instances }}"
-
-    - name: Wait for the instances to boot by checking the ssh port
-      wait_for: host={{item.public_dns_name}} port=22 delay=60 timeout=320 state=started
-      with_items: ec2.instances
 
 - name: Configure dev instance
   hosts: dev
   connection: ssh
   remote_user: ubuntu
+  become: true
   gather_facts: true
 
   vars:
     proj_dir: /var/lib/boxfuse-sample-java-war-hello
+    pub_key_path: "~/.ssh/id_rsa.pub"
+    ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
     ansible_ssh_user: "ubuntu"
 
   tasks:
     - name: ensure python, maven, jdk, git, docker.io installed
-      become: true
       apt:
         name: ['default-jdk', 'maven', 'git', 'python3', 'docker.io']
         state: present

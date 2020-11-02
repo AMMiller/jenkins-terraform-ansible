@@ -31,7 +31,7 @@ provider "aws" {
 
 resource "aws_key_pair" "ssh_key" {
     key_name   = "ssh_key"
-    public_key = var.public_key_material
+    public_key = "${file(var.public_key_path)}" 
 }
 
 #resource "aws_network_interface" "dev_if" {
