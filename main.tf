@@ -22,7 +22,7 @@ resource "aws_instance" "dev" {
 }
 
 resource "aws_instance" "prod" {
-    depends_on = [aws_instance.mvn]
+    depends_on = [aws_instance.dev]
     count = 1
     ami = var.ami_prod
     instance_type = var.instance_type_prod
