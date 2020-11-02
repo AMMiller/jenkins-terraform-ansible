@@ -10,6 +10,8 @@ variable region {
   description = "aws region"
 }
 
+// ec2 instances
+
 variable ami_prod {
   type        = string
   default     = "ami-0e82959d4ed12de3f"
@@ -32,6 +34,20 @@ variable instance_type_dev {
   type        = string
   default     = "t2.micro"
   description = "instance type for dev server"
+}
+
+// network
+
+variable cidr_block_vpc {
+  type        = string
+  default     = "172.16.0.0/16"
+  description = "cidr block for vpc"
+}
+
+variable cidr_block_subnet {
+  type        = string
+  default     = "172.16.10.0/24"
+  description = "cidr block for subnet"
 }
 
 variable private_ip_dev {

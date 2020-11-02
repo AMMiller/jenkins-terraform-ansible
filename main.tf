@@ -12,7 +12,7 @@ provider "aws" {
 }
 
 resource "aws_vpc" "boxfuse_vpc" {
-  cidr_block = "172.16.0.0/16"
+  cidr_block = var.cidr_block_vpc
 
   tags = {
     Name = var.common_tag
@@ -21,8 +21,8 @@ resource "aws_vpc" "boxfuse_vpc" {
 
 resource "aws_subnet" "boxfuse_subnet" {
   vpc_id            = aws_vpc.boxfuse_vpc.id
-  cidr_block        = "172.16.10.0/24"
-  availability_zone = var.zone
+  cidr_block        = var.cidr_block_subnet
+  availability_zone = var.region
 
   tags = {
     Name = var.common_tag
@@ -36,7 +36,7 @@ resource "aws_subnet" "boxfuse_subnet" {
 
 resource "aws_network_interface" "dev_if" {
     subnet_id   = aws_subnet.boxfuse_subnet.id
-    private_ips = ["172.16.10.100"]
+    private_ips = [var.private_ip_prod]
 
     tags = {
         Name = "primary_network_interface"
@@ -59,7 +59,7 @@ resource "aws_instance" "dev" {
 
 resource "aws_network_interface" "prod_if" {
     subnet_id   = aws_subnet.boxfuse_subnet.id
-    private_ips = ["172.16.10.101"]
+    private_ips = [var.private_ip_prod]
 
     tags = {
         Name = "primary_network_interface"
