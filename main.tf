@@ -12,21 +12,21 @@ provider "aws" {
 }
 
 resource "aws_vpc" "boxfuse_vpc" {
-  cidr_block = var.cidr_block_vpc
+    cidr_block = var.cidr_block_vpc
 
-  tags = {
-    Name = var.common_tag
-  }
+    tags = {
+        Name = var.common_tag
+    }
 }
 
 resource "aws_subnet" "boxfuse_subnet" {
-  vpc_id            = aws_vpc.boxfuse_vpc.id
-  cidr_block        = var.cidr_block_subnet
-  availability_zone = var.region
+    vpc_id            = aws_vpc.boxfuse_vpc.id
+    cidr_block        = var.cidr_block_subnet
+    availability_zone = var.zone
 
-  tags = {
-    Name = var.common_tag
-  }
+    tags = {
+        Name = var.common_tag
+    }
 }
 
 #resource "aws_key_pair" "ssh-key" {

@@ -10,6 +10,12 @@ variable region {
   description = "aws region"
 }
 
+variable zone {
+  type        = string
+  default     = "us-east-2a"
+  description = "aws region"
+}
+
 // ec2 instances
 
 variable ami_prod {
