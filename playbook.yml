@@ -1,9 +1,46 @@
 ---
-- name: boxfuse dev env
+- name: ec2 launcher
+  hosts: localhost
+  connection: local
+  gather_facts: false
 
   tasks:
-    amazon.aws.ec2:
-      instance_tags:
-        Name: boxfuse-dev
+    - name: launch dev instance
+      ec2:
+        instance_tags:
+          Name: boxfuse-dev
+    - name: Add new instances to host group
+      add_host: hostname={{item.public_ip}} groupname=dev
+      with_items: ec2.instances
 
-      state: restarted
+    - name: Wait for the instances to boot by checking the ssh port
+      wait_for: host={{item.public_dns_name}} port=22 delay=60 timeout=320 state=started
+      with_items: ec2.instances
+
+- name: Configure dev instance
+  hosts: dev
+  remote_user: root
+
+  vars:
+    - proj_dir: /var/lib/boxfuse-sample-java-war-hello
+
+  tasks:
+    - name: ensure python, maven, jdk, git, docker.io installed
+      become: true
+      apt:
+        name: ['default-jdk', 'maven', 'git', 'python3', 'docker.io']
+        state: present
+        update_cache: true
+ 
+    - name: Ensure that project dir is empty
+      file:
+        path: "{{ proj_dir }}"
+        state: absent
+
+    - name: Clone project
+      git:
+        repo: https://github.com/boxfuse/boxfuse-sample-java-war-hello.git
+        dest: "{{ proj_dir }}"
+
+    - name: Build project
+      shell: "mvn package -f {{ proj_dir }}/pom.xml"
