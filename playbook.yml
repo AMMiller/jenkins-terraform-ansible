@@ -19,7 +19,7 @@
 
 - name: Configure dev instance
   hosts: dev
-  remote_user: root
+  remote_user: ubuntu
 
   vars:
     - proj_dir: /var/lib/boxfuse-sample-java-war-hello
