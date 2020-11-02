@@ -29,10 +29,10 @@ provider "aws" {
 #    }
 #}
 
-#resource "aws_key_pair" "ssh-key" {
-#    key_name   = "ssh-key"
-#    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCrhsd7dekcsDR4+fcRgc4YRMfidea6I2jr1tlkqy6fNFnvexlv/LYQO9ARja/owWhUVEnGnI8Y9XJGJf4EazGXUjX8FDBRIbB7NWCAOQJph8RvUSi/+ZGfwfEunlR5DFoUHaX8xI2iph3bRXQzl93WGhSCkoyfjKLaNr3kHKukiZx9vCAVkW+SpJ1p7gQMnhmI5HUZrXKO4o3T7J2SlRkHZytgVYgY5vWeflUVhg1OlREt6ss59RYysR7GcMauvyeYpR9VMxwXkNAow4MmYv1j8zwHjnaTRYpAlcxlmMaM3BW1sYBJPLzaqPyZw3IHQalY91doNODiFEKn4BOB5vL2lTyYxnCehP0ebRinxfYxceOBcn7r2rj22GebfjTEzM3eTxfDjAVN6Bk/AOlPtbS6luBZA5vQ0qDTbU2mLHbjnPrRhKu8FrWEMM7qv3KOI3uu1YIJEmwW5nxV9OtwK5EDIuYbUknzQW/7A4/7wzQtrCTFwxSNYdbMM4HRUpbaBOGbzwEbIqw9h38nKaUN3QjzaPW0DN0gZtF6kkt31QXd2PIbv5OVIlYTGNHIWx12HY2WVn8piYCpwYXWzcNLPe6yWKBxZbZsoprpN+F47czHES9ZBrrt6nz6zHVqI6ZTl8XFJr4kRlV7GQIw9Yh711rhswITXdzLRAmhOO4DqAt8Ww== amiller@yandex.ru"
-#}
+resource "aws_key_pair" "ssh-key" {
+    key_name   = "ssh-key"
+    public_key = var.public_key_material
+}
 
 #resource "aws_network_interface" "dev_if" {
 #    subnet_id   = aws_subnet.boxfuse_subnet.id
@@ -52,6 +52,7 @@ resource "aws_instance" "dev" {
         Name = "boxfuse-dev"
     }
 
+    key_name: aws_key_pair.ssh_key
 #    network_interface {
 #        network_interface_id = aws_network_interface.dev_if.id
 #        device_index         = 0
@@ -81,6 +82,7 @@ resource "aws_instance" "prod" {
         Name = "boxfuse-prod"
     }
 
+    key_name: aws_key_pair.ssh_key
 #    network_interface {
 #        network_interface_id = aws_network_interface.prod_if.id
 #        device_index         = 0
