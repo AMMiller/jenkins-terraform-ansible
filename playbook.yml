@@ -23,11 +23,13 @@
   hosts: dev
   connection: ssh
   remote_user: ubuntu
-#  become: true
+  become: true
   gather_facts: true
 
   vars:
     proj_dir: /tmp/boxfuse
+    ansible_ssh_common_args: "-i key -o StrictHostKeyChecking=no"
+    ansible_ssh_user: "ubuntu"
 
   tasks:
     - name: ensure python, git, docker.io installed
