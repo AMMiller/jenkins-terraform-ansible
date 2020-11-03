@@ -16,7 +16,7 @@ variable zone {
   description = "aws region"
 }
 
-variable public_key_material {
+variable public_key_path {
   type        = string
   default     = "~/.ssh/id_rsa.pub"
   description = "public key for access aws hosts"
