@@ -18,7 +18,7 @@ variable zone {
 
 variable public_key_path {
   type        = string
-  default     = "~/.ssh/id_rsa.pub"
+  default     = "id_rsa.pub"
   description = "public key for access aws hosts"
 }
 
