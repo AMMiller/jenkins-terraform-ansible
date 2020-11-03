@@ -3,10 +3,6 @@
   hosts: localhost
   connection: local
   gather_facts: false
-
-  vars:
-    key_name: aws_key
-    region: us-east-2
   
   tasks:
     - name: launch dev instance
@@ -21,7 +17,6 @@
         hostname: "{{ item.public_ip_address }}" 
         groups: 
           - dev
-        #key_name: aws_key
       loop: "{{ ec2.instances }}"
 
 - name: Configure dev instance
@@ -32,27 +27,63 @@
   gather_facts: true
 
   vars:
-    proj_dir: /var/lib/boxfuse-sample-java-war-hello
-    pub_key_path: "~/.ssh/id_rsa.pub"
-    ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
-    ansible_ssh_user: "ubuntu"
+    proj_dir: /tmp/boxfuse
 
   tasks:
-    - name: ensure python, maven, jdk, git, docker.io installed
+    - name: ensure python, git, docker.io installed
       apt:
-        name: ['default-jdk', 'maven', 'git', 'python3', 'docker.io']
+        name: ['git', 'python3', 'docker.io']
         state: present
         update_cache: true
- 
-    - name: Ensure that project dir is empty
+
+    - name: ensure pip installed
+          apt: name=python-pip state=present
+      
+    - name: ensure docker-py installed
+      pip: name=docker-py
+
+    - name: ensure project dir is empty
       file:
         path: "{{ proj_dir }}"
         state: absent
 
-    - name: Clone project
+    - name: Clone maven Dockerfile
       git:
-        repo: https://github.com/boxfuse/boxfuse-sample-java-war-hello.git
+        repo: https://github.com/AMMiller/docker-maven.git
         dest: "{{ proj_dir }}"
 
-    - name: Build project
-      shell: "mvn package -f {{ proj_dir }}/pom.xml"
+    - name: Build Docker image from Dockerfile
+      docker_image:
+        name: boxfuse_web
+        path: "{{ proj_dir }}"
+        state: build  
+
+    # or simply pull it from repo
+    #- name: Pull an image
+    #  docker_image:
+    #    name: repo/someimage       
+    #    source: pull
+
+    - name: Build Docker image from Dockerfile
+      docker_image:
+        name: boxfuse_maven_builder
+        path: "{{ proj_dir }}"
+        state: build 
+
+    - name: Start container with healthstatus
+      docker_container:
+        name: maven_builder
+        image: boxfuse_maven_builder
+        volumes: 
+          - "/var/run/docker.sock:/var/run/docker.sock"
+        state: started
+        
+
+
+    #- name: Tag image
+    #  docker_image:
+    #    name: boxfuse_web:latest     # Equal to name in build task.
+    #    repository: boxfuse_web:latest  # New tag there.
+    #    pull: no
+    #    state: present
+    #  when: image_build.changed
