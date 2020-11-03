@@ -37,7 +37,7 @@
         update_cache: true
 
     - name: ensure pip installed
-          apt: name=python-pip state=present
+      apt: name=python-pip state=present
       
     - name: ensure docker-py installed
       pip: name=docker-py
