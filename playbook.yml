@@ -23,7 +23,7 @@
   hosts: dev
   connection: ssh
   remote_user: ubuntu
-  become: true
+#  become: true
   gather_facts: true
 
   vars:
